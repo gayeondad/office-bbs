@@ -1,0 +1,21 @@
+<div class="input-group mb-3">
+  <label class="input-group-text" for="alType">종류</label>
+  <select class="form-select" name="alType" id="alType">
+    <option selected>Choose...</option>
+    {% for option in options_leave %}
+    <option value="{{ option.value }}"{% if option.value == data.alType %} selected {% endif %}>{{ option.label }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+<div class="input-group mb-3">
+  <label class="input-group-text" for="startdate">기간</label>
+  <input type="text" class="form-control" id="sDt" aria-label="start-date" autocomplete="off">
+  <span class="input-group-text"> ~ </span>
+  <input type="text" class="form-control" id="eDt" aria-label="end-date" autocomplete="off">
+</div>
+
+<div class="input-group mb-3">
+  <label for="note" class="input-group-text">비고</label>
+  <input type="text" class="form-control" name="note" id="note" value="{{ data.note }}" required>
+</div>

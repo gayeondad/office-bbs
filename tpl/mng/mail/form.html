@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="input-group col">
+    <label for="toName" class="input-group-text">이름</label>
+    <input type="text" class="form-control" name="toName" id="toName" value="{{ data.toName }}" required>
+  </div>
+  <div class="input-group col">
+    <label for="toAddress" class="input-group-text">이메일</label>
+    <input type="email" class="form-control" name="toAddress" id="toAddress" placeholder="id@email.address" value="{{ data.toAddress }}" required>
+  </div>
+  <div class="input-group col">
+    <label for="toTel" class="input-group-text">연락처</label>
+    <input type="text" class="form-control" name="toTel" id="toTel" value="{{ data.toTel }}">
+  </div>
+</div>
+
+<div class="input-group">
+  <label for="subject" class="input-group-text">제목</label>
+  <input type="text" class="form-control" name="subject" id="subject" value="{{ data.subject }}" required>
+</div>
+
+<div class="input-group">
+  <label for="content" class="input-group-text">내용</label>
+  <textarea class="form-control" name="content" id="content" rows="3">{% if data.content is defined %}{{ data.content }}{% endif %}</textarea>
+</div>

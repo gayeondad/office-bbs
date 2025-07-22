@@ -1,0 +1,172 @@
+{% extends "layout.html" %}
+
+{% block head %}
+  {{ parent() }}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker-bs5.min.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="my-box m-3 p-3">
+  <form class="">
+
+    <div class="row mb-2">
+      <div class="col-md-1">
+        <label for="input1" class="form-label">기간</label>
+      </div>
+      <div class="col-md-5 d-inline-flex" id="input1">
+        <select name="dtType" id="inputState" class="form-select form-select-sm">
+          <option value="dtReg" selected>등록일</option>
+          <option>...</option>
+        </select>
+        <input type="text" class="form-control form-control-sm mx-3" name="sDt" value="2025-03-21" id="sDt" autocomplete="off">
+        <span> ~ </span>
+        <input type="text" class="form-control form-control-sm ms-3" name="eDt" value="2025-03-21" id="eDt" autocomplete="off">
+      </div>
+      <div class="col-md-1">
+        <label for="input2" class="form-label">작성자</label>
+      </div>
+      <div class="col-md-5">
+        <input type="text" class="form-control form-control-sm" name="writer" id="input2">
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col-md-1">
+        <label for="input3" class="form-label">검색어</label>
+      </div>
+      <div class="col-md-5 d-inline-flex" id="input3">
+        <select name="srchDvg" id="srchDvg" class="form-select form-select-sm">
+          <option selected>Choose...</option>
+          <option>...</option>
+        </select>
+        <input type="text" class="form-control form-control-sm ms-3" name="srchText" value="" id="srchText" autocomplete="off">
+      </div>
+      <div class="col-md-1">
+        <label for="input4" class="form-label">구분</label>
+      </div>
+      <div class="col-md-5" id="input4">
+        <input class="form-check-input" type="checkbox" name="dvgn[]" id="dvgn1">
+        <label class="form-check-label" for="dvgn1">1등급</label>
+        <input class="form-check-input" type="checkbox" name="dvgn[]" id="dvgn2">
+        <label class="form-check-label" for="dvgn2">2등급</label>
+        <span class="form-text">(작성자 등급을 선택하세요.)</span>
+      </div>
+    </div>
+
+    <div class="col-auto justify-content-end">
+      <button type="submit" class="btn btn-primary">검색</button>
+    </div>
+  </form>
+</div>
+
+
+
+
+<div>
+  total: {% if pages.0.total is defined %}{{ pages.0.total }}{% endif %}
+</div>
+
+<table class="table">
+  <thead>
+    <tr class="table-warning">
+      <th scope="col">#</th>
+      <th scope="col">제목</th>
+      <th scope="col">작성자</th>
+      <th scope="col">등록일시</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>
+      <th scope="row">{{ row.num }}</th>
+      <td><a href="./index.php" title="{{ row.seq }}" class="a-to-view">{{ row.title }}</a></td>
+      <td>{{ row.writerId }}</td>
+      <td>{{ row.dtReg }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group" role="group" aria-label="First group">
+    {% for page in pages %}
+      {% if page.first is defined %}<button type="button" value="{{ page.first }}" class="btn btn-outline-secondary">처음</button>{% endif %}
+      {% if page.prev is defined %}<button type="button" value="{{ page.prev }}" class="btn btn-outline-secondary">이전</button>{% endif %}
+      {% for pgnum in page.visable %}<button type="button" value="{{ pgnum }}" class="btn btn-outline-secondary">{{ pgnum }}</button>{% endfor %}
+      {% if page.next is defined %}<button type="button" value="{{ page.next }}" class="btn btn-outline-secondary">다음</button>{% endif %}
+      {% if page.last is defined %}<button type="button" value="{{ page.last }}" class="btn btn-outline-secondary">마지막</button>{% endif %}
+    {% endfor %}
+  </div>
+  <div class="input-group">
+    <div class="input-group-text" id="btnGroupAddon2">@</div>
+    <input type="text" class="form-control" placeholder="Input group example" aria-label="Input group example" aria-describedby="btnGroupAddon2">
+  </div>
+
+  <div>
+    <button type="button" id="btnWrite" class="btn btn-success">작성</button>
+  </div>
+</div>
+
+{% endblock %}
+{% block after_script %}
+  {{ parent() }}
+  <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
+  <script>
+    window.onload = () => {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+
+      const aLinks = document.querySelectorAll(".a-to-view");
+      for (const aLink of aLinks) {
+        aLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          if (urlParams.has("seq")) {
+            urlParams.set('seq', aLink.title);
+          }
+          else {
+            urlParams.append('seq', aLink.title);
+          }
+          urlParams.set('g', 'v');
+          const newQueryString = urlParams.toString();
+          window.location.href = "./index.php?" + newQueryString;
+        });
+      }
+        
+      const pageButtons = document.querySelectorAll(".btn-outline-secondary");
+      if (pageButtons !== null && pageButtons !== undefined) {
+        for (const pageButton of pageButtons) {
+          pageButton.addEventListener("click", () => {
+            const newPageNum = pageButton.value;
+            if (newPageNum > 0) {
+              urlParams.set('currentPage', newPageNum);
+              const newQueryString = urlParams.toString();
+              window.location.href = "./index.php?" + newQueryString;
+            }
+          });
+        }
+      }
+
+      const writeButton = document.querySelector("#btnWrite");
+      writeButton.addEventListener("click", () => {
+        urlParams.set('g', 'w');
+        const newQueryString = urlParams.toString();
+        window.location.href = "./index.php?" + newQueryString;
+      });
+
+      const sDt = document.getElementById('sDt');
+      const datepicker1 = new Datepicker(sDt, {
+        format: 'yyyy-mm-dd', // 날짜 형식 설정
+        language: 'ko', // 한국어 설정
+        autohide: true, // 날짜 선택 후 자동으로 닫힘
+      });
+
+      const eDt = document.getElementById('eDt');
+      const datepicker2 = new Datepicker(eDt, {
+        format: 'yyyy-mm-dd', // 날짜 형식 설정
+        language: 'ko', // 한국어 설정
+        autohide: true, // 날짜 선택 후 자동으로 닫힘
+      });
+    }
+  </script>
+{% endblock %}

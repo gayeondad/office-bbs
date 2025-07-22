@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div>
+  total: {% if pages.0.total is defined %}{{ pages.0.total }}{% endif %}
+</div>
+
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">부서</th>
+      <th scope="col">사원</th>
+      {% for i in range(1, lastDay) %}
+      <th scope="col">{{ i }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in dprt %}
+    <tr>
+      <td scope="row" rowspan="{{ user.span }}">{{ user.nm }}</td>
+      {% for adm in user.adm %}
+        {% if not loop.first %}
+          </tr><tr>
+        {% endif %}
+        <td rowspan="2">{{ adm.nm }}</td>
+        {% for i in range(1, lastDay) %}
+        <td>
+          {% set formattedDay = i < 10 ? '0' ~ i : i %}
+          {% set ymd = year ~ '-' ~ month ~ '-' ~ formattedDay %}
+          {% for row in rows %}
+            {% if row.admSeq == adm.admSeq and row.aDate == ymd %}
+              {% if row.inTime != '00:00:00' %}
+              {{ row.inTime|split(":")|slice(0, 2)|join(":") }}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </td>
+        {% endfor %}
+        </tr><tr>
+        {% for i in range(1, lastDay) %}
+        <td>
+          {% set formattedDay = i < 10 ? '0' ~ i : i %}
+          {% set ymd = year ~ '-' ~ month ~ '-' ~ formattedDay %}
+          {% for row in rows %}
+            {% if row.admSeq == adm.admSeq and row.aDate == ymd %}
+              {% if row.outTime != '00:00:00' %}
+              {{ row.outTime|split(":")|slice(0, 2)|join(":") }}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </td>
+        {% endfor %}
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+<div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+  <div>
+    <button type="button" id="btnWrite" class="btn btn-success">작성</button>
+  </div>
+</div>
+
+{% endblock %}
+{% block after_script %}
+  {{ parent() }}
+  <script>
+    window.onload = () => {
+      const pageButton = document.querySelector(".btn-outline-secondary");
+      if (pageButton !== null && pageButton !== undefined) {
+        pageButton.addEventListener("click", () => {
+          console.log('page number: ' + this.value);
+          document.location.href = "./index.php?currentPage=" + this.value;
+        });
+      }
+
+      const writeButton = document.querySelector("#btnWrite");
+      writeButton.addEventListener("click", () => {
+        document.location.href = "./index.php?g=w";
+      });
+    }
+  </script>
+{% endblock %}

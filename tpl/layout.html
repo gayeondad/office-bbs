@@ -1,0 +1,91 @@
+{# tpl/layout.html #}
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}php module{% endblock %}</title>
+    {% block head %}
+    <!-- <link href="/rsc/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="/rsc/css/my.css" rel="stylesheet">
+    {% endblock %}
+  </head>
+  <body>
+    
+    
+    {% block nav %}
+    <header class="container bd-gutter sticky-top">
+      <nav class="navbar navbar-expand-lg bg-success border-bottom border-body" data-bs-theme="dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Navbar</a>
+          <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/mng/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/mng/mail/">메일관리</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/mng/adm/">사원관리</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">관리</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="/mng/adm/">사원관리</a></li>
+                  <li><a class="dropdown-item" href="/mng/dprt/">부서관리</a></li>
+                  <li><a class="dropdown-item" href="/mng/atdnc/">출결관리</a></li>
+                  <li><a class="dropdown-item" href="/mng/anl/">연차관리</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/mng/adm_role/">역할관리</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">게시판</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="/mng/bbs/?boardSeq=2">Q&A</a></li>
+                  <li><a class="dropdown-item" href="/mng/bbs/?boardSeq=1">공지사항</a></li>
+                  <li><a class="dropdown-item" href="/mng/bbs/?boardSeq=3">자료실</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/mng/bbs_cnf/">게시판 관리</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+              </li>
+            </ul>
+            <form class="d-flex" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-info" type="submit" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem;">Search</button>
+            </form>
+            <div class="ms-2">
+              <a href="/mng/logout.php" class="btn btn-sm btn-warning" target="hiddenframe">Log-Out</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    {% endblock %}
+
+    <div class="container bd-gutter">
+    {% block content %}{% endblock %}
+    </div>
+
+    {% block footer %}
+    <footer class="container bd-gutter">
+      <div class="text-bg-light p-3 mt-3">footer area</div>
+    </footer>
+    <iframe width=0 height=0 name='hiddenframe' id='hiddenframe' style='display:none;'></iframe>
+    {% endblock %}
+    
+    
+    
+    {% block after_script %}
+    <!-- <script src="/rsc/js/bootstrap.bundle.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <script src="/rsc/js/jquery.min.js"></script>
+    {% endblock %}
+  </body>
+</html>

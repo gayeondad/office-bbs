@@ -1,0 +1,19 @@
+<div class="mb-3">
+  <label for="nm" class="form-label">관리자 역할명</label>
+  <input type="text" class="form-control" name="nm" id="nm" placeholder="역할명" value="{{ data.nm }}" required>
+</div>
+
+<div class="mb-3 form-check form-switch">  
+  <input class="form-check-input" type="checkbox" role="switch" name="right_user" id="right_user" value="Y"{% if data.right_user == 'Y' %} checked{% endif %}>
+  <label class="form-check-label" for="right_user">회원 접근 권한</label>
+</div>
+<div class="mb-3 form-check form-switch">  
+  <input class="form-check-input" type="checkbox" role="switch" name="right_settle" id="right_settle" value="Y"{% if data.right_settle == 'Y' %} checked{% endif %}>
+  <label class="form-check-label" for="right_settle">결제 접근 권한</label>
+</div>
+
+<div class="mb-3 form-check form-switch">  
+  <input class="form-check-input" type="checkbox" role="switch" name="right_access" id="right_access" value="Y"{% if data.right_access == 'Y' %} checked{% endif %}>
+  <label class="form-check-label" for="right_access">접속 접근 권한</label>
+</div>
+

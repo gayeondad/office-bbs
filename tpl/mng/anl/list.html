@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div>
+  total: {% if pages.0.total is defined %}{{ pages.0.total }}{% endif %}
+</div>
+
+<table class="table">
+  <thead>
+    <tr class="table-warning">
+      <th scope="col">#</th>
+      <th scope="col">사원명</th>
+      <th scope="col">종류</th>
+      <th scope="col">기간</th>
+      <th scope="col">비고</th>
+      <th scope="col">삭제</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>
+      <th scope="row">{{ row.num }}</th>
+      <td><a href="index.php?g=v&seq={{ row.seq }}">{{ row.admSeq }}</a></td>
+      <td>{{ row.alType }}</td>
+      <td>{{ row.sDt }} ~ {{ row.eDt }}</td>
+      <td>{{ row.note }}</td>
+      <td>
+        <button class="s_btn type_small type_red" value="X" alt="삭제" />
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group" role="group" aria-label="First group">
+    {% for page in pages %}
+      {% if page.first is defined %}<button type="button" value="{{ page.first }}" class="btn btn-outline-secondary">처음</button>{% endif %}
+      {% if page.prev is defined %}<button type="button" value="{{ page.prev }}" class="btn btn-outline-secondary">이전</button>{% endif %}
+      {% for pgnum in page.visable %}<button type="button" value="{{ pgnum }}" class="btn btn-outline-secondary">{{ pgnum }}</button>{% endfor %}
+      {% if page.next is defined %}<button type="button" value="{{ page.next }}" class="btn btn-outline-secondary">다음</button>{% endif %}
+      {% if page.last is defined %}<button type="button" value="{{ page.last }}" class="btn btn-outline-secondary">마지막</button>{% endif %}
+    {% endfor %}
+  </div>
+  <div class="input-group">
+    <div class="input-group-text" id="btnGroupAddon2">@</div>
+    <input type="text" class="form-control" placeholder="Input group example" aria-label="Input group example" aria-describedby="btnGroupAddon2">
+  </div>
+
+  <div>
+    <button type="button" id="btnWrite" class="btn btn-success">작성</button>
+  </div>
+</div>
+
+{% endblock %}
+{% block after_script %}
+  {{ parent() }}
+  <script>
+    window.onload = () => {
+      const pageButton = document.querySelector(".btn-outline-secondary");
+      if (pageButton !== null && pageButton !== undefined) {
+        pageButton.addEventListener("click", () => {
+          console.log('page number: ' + this.value);
+          document.location.href = "./index.php?currentPage=" + this.value;
+        });
+      }
+
+      const writeButton = document.querySelector("#btnWrite");
+      writeButton.addEventListener("click", () => {
+        document.location.href = "./index.php?g=w";
+      });
+    }
+  </script>
+{% endblock %}

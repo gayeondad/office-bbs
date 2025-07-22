@@ -1,0 +1,49 @@
+<div class="mb-3">
+  <label for="adminid" class="form-label">아이디</label>
+  <input type="text" class="form-control" name="id" id="adminid" placeholder="아이디" value="{{ data.id }}" required>
+</div>
+
+<div class="mb-3">
+  <label for="adminpwd" class="form-label">패스워드</label>
+  <input type="password" class="form-control" name="pw" id="adminpwd" required>
+</div>
+
+<div class="mb-3">
+  <label for="nm" class="form-label">이름</label>
+  <input type="text" class="form-control" name="nm" id="nm" value="{{ data.nm }}" placeholder="이름">
+</div>
+
+<div class="input-group mb-3">
+  <label class="input-group-text" for="dprt">부서</label>
+  <select class="form-select" name="dprtSeq" id="dprt">
+    <option selected>Choose...</option>
+    {% for option in options_dprt %}
+    <option value="{{ option.value }}"{% if option.value == data.dprtSeq %} selected {% endif %}>{{ option.label }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+<div class="input-group mb-3">
+  <label class="input-group-text" for="pstn">직급</label>
+  <select class="form-select" name="pstn" id="pstn">
+    <option selected>Choose...</option>
+    {% for option in options_pstn %}
+    <option value="{{ option.value }}"{% if option.value == data.pstn %} selected {% endif %}>{{ option.label }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+<div class="input-group mb-3">
+  <label class="input-group-text" for="roleSeq">관리자 역할</label>
+  <select class="form-select" name="roleSeq" id="role">
+    <option selected>Choose...</option>
+    {% for option in options_role %}
+    <option value="{{ option.value }}"{% if option.value == data.roleSeq %} selected {% endif %}>{{ option.label }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+<div class="mb-3 form-check form-switch">  
+  <input class="form-check-input" type="checkbox" role="switch" name="useYn" id="useYn" value="Y"{% if data.useYn == 'Y' %} checked{% endif %}>
+  <label class="form-check-label" for="useYn">근무 여부</label>
+</div>

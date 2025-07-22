@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+
+{% block head %}
+  {{ parent() }}
+  <link href="/rsc/jodit/jodit.min.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block content %}
+<div style="width: 90%;margin-left: 20px;">
+  <p>
+    view
+  </p>
+
+  <fieldset disabled>
+  {{ include('mng/bbs/form.html') }}
+  </fieldset>
+
+  <div>
+    <button type="button" id="btnList" class="btn btn-success">목록</button>
+    <button type="button" id="btnEdit" class="btn btn-warning">수정</button>
+    <button type="button" id="btnDelt" class="btn btn-danger">삭제</button>
+  </div>
+
+</div>
+{% endblock %}
+{% block after_script %}
+  {{ parent() }}
+  <script type="text/javascript" src="/rsc/jodit/jodit.min.js"></script>
+  <script>
+    Jodit.make('#jodit-editor');
+  </script>
+  <script>
+    window.onload = () => {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+
+      const listButton = document.querySelector("#btnList");
+      listButton.addEventListener("click", () => {
+        urlParams.set('g', 'l');
+        if (urlParams.has("seq")) {
+          urlParams.delete("seq");
+        }
+        const newQueryString = urlParams.toString();
+        window.location.href = "./index.php?" + newQueryString;
+      });
+
+      const editButton = document.querySelector("#btnEdit");
+      editButton.addEventListener("click", () => {
+        urlParams.set('g', 'e');
+        const newQueryString = urlParams.toString();
+        window.location.href = "./index.php?" + newQueryString;
+      });
+
+      const deleteButton = document.querySelector("#btnDelt");
+      deleteButton.addEventListener("click", () => {
+        if (confirm("정말 삭제하시겠습니까?")) {
+          const url = "./proc.php";
+          const formData = new FormData();
+          formData.append('a', 'd');
+          formData.append('boardSeq', '{{ boardSeq }}');
+          formData.append('seq', '{{ data.seq }}');
+
+          fetch(url, {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('네트워크 응답이 정상이 아닙니다.');
+            }
+            console.log(response.status);
+            return response.json();
+          })
+          .then(result => {
+            if (result.code == 'success') {
+              window.alert(result.msg);
+              urlParams.set('g', 'l');
+              const newQueryString = urlParams.toString();
+              window.location.href = "./index.php?" + newQueryString;
+              // window.location.href = "./index.php" + window.location.search.replace(/g=v/g, "g=l");
+            }
+            else {
+              window.alert(result.msg);
+            }
+          })
+          .catch(error => {
+            console.log('failure: ', error);
+          });
+        }
+      });
+    }
+  </script>
+{% endblock %}

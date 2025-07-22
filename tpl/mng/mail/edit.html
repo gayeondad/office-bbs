@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block head %}
+  {{ parent() }}
+  <link href="/rsc/jodit/jodit.min.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block content %}
+<div style="width: 90%;margin-left: 20px;">
+  <p>
+    view
+  </p>
+  <form action="./proc.php" method="post" id="editform" class="row g-3">
+    <input type="hidden" name="boardSeq" value="{{ boardSeq }}">
+    <input type="hidden" name="seq" value="{{ data.seq }}">
+    <input type="hidden" name="a" value="u">
+
+    {{ include('mng/bbs/form.html') }}
+
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">저장</button>
+      <button type="button" id="btnCancel" class="btn btn-secondary">취소</button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}
+{% block after_script %}
+  {{ parent() }}
+  <script type="text/javascript" src="/rsc/jodit/jodit.min.js"></script>
+  <script>
+    Jodit.make('#jodit-editor');
+  </script>
+  <script>
+    window.onload = () => {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+
+      const f = document.getElementById("editform");
+      f.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const fData = new FormData(f);
+        const params = new URLSearchParams(fData);
+
+        fetch("./proc.php", {
+          method: "POST",
+          body: params
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("네트워크 응답이 정상이 아닙니다.");
+          }
+          return response.json();
+        })
+        .then(result => {
+          if (result.code == 'success') {
+            window.alert(result.msg);
+            urlParams.set('g', 'v');
+            const newQueryString = urlParams.toString();
+            window.location.href = "./index.php?" + newQueryString;
+            // document.location.href = "./index.php" + window.location.search.replace(/g=e/g, "g=v");
+          }
+          else {
+            window.alert(result.msg);
+          }
+        })
+        .catch(error => {
+          console.log('failure: ', error);
+        });
+      });
+
+      const cancelButton = document.querySelector("#btnCancel");
+      cancelButton.addEventListener("click", () => {
+        history.back();
+      });
+    }
+  </script>
+{% endblock %}

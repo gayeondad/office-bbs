@@ -1,0 +1,33 @@
+<div class="mb-3">
+  <label for="nm" class="form-label">게시판명</label>
+  <input type="text" class="form-control" name="nm" id="nm" placeholder="게시판명" value="{{ data.nm }}" required>
+</div>
+
+<div class="mb-3">
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="checkbox" name="ctgr" id="ctgr1" value="1">
+    <label class="form-check-label" for="ctgr1">공지사항 스타일</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="checkbox" name="ctgr" id="ctgr2" value="2">
+    <label class="form-check-label" for="ctgr2">질문답변 스타일</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="checkbox" name="ctgr" id="ctgr3" value="3">
+    <label class="form-check-label" for="ctgr3">자유게시판 스타일</label>
+  </div>
+</div>
+
+
+
+
+
+<div class="mb-3 form-check form-switch">  
+  <input class="form-check-input" type="checkbox" role="switch" name="cmntYn" id="cmntYn" value="Y"{% if data.cmntYn == 'Y' %} checked{% endif %}>
+  <label class="form-check-label" for="cmntYn">댓글 사용</label>
+</div>
+
+<div class="mb-3 form-check form-switch">  
+  <input class="form-check-input" type="checkbox" role="switch" name="useYn" id="useYn" value="Y"{% if data.useYn != 'N' %} checked{% endif %}>
+  <label class="form-check-label" for="useYn">게시판 활성화</label>
+</div>
