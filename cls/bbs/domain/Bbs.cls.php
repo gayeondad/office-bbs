@@ -11,7 +11,7 @@ class Bbs
 	private $title = '';
 	private $content = '';
 	private $writeId = '';
-	private $dtRgd = '0000-00-00 00:00:00';
+	private $dtReg = '0000-00-00 00:00:00';
 	private $dtMdf = '0000-00-00 00:00:00';
 
 	public function __construct($row=array())
@@ -40,5 +40,16 @@ class Bbs
 	public function setWriteId($writeId) { $this->writeId = $writeId; }
 	public function setDtReg($dtReg) { $this->dtReg = $dtReg; }
 	public function setDtMdf($dtMdf) { $this->dtMdf = $dtMdf; }
-
+	public function toArray()
+	{
+		return [
+			'seq' => $this->seq,
+			'boardSeq' => $this->boardSeq,
+			'title' => $this->title,
+			'content' => $this->content,
+			'writeId' => $this->writeId,
+			'dtReg' => $this->dtReg,
+			'dtMdf' => $this->dtMdf,
+		];
+	}
 }

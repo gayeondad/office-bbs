@@ -55,7 +55,7 @@ if ($_GET['g'] == 'w') {
 	if ($rslt === null) {
 		throw new \Exception("Post not found.");
 	}
-	$data = $rslt['row'];
+	$data = $rslt->toArray(); // Assuming Bbs has a toArray method to convert to array	
 	if (empty($data)) {
 		throw new \Exception("No data found for the given post ID.");
 	}

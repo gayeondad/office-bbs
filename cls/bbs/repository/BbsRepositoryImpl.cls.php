@@ -7,6 +7,7 @@ namespace cls\bbs\repository;
 use Exception;
 use cls\configuration\Database;
 use cls\bbs\dto\BbsListDto;
+use cls\bbs\domain\Bbs;
 
 class BbsRepositoryImpl implements BbsRepository {
 
@@ -103,12 +104,12 @@ class BbsRepositoryImpl implements BbsRepository {
 
 	public function findPostById($int=0)
 	{
-		$returnValue = ['row' => []];
-		
+		$returnValue = null;
+
 		if ($int <= 0) {
 			return null; // 유효하지 않은 ID
 		}
-		$query = "SELECT *, (SELECT nm FROM adm WHERE id = B0_1.writerId) AS writerName FROM board B0_1 WHERE seq = ?";
+		$query = "SELECT * FROM board B0_1 WHERE seq = ?";
 		$rs = $this->db->Execute($query, [$int]);
 		if ($rs === false) {
 			throw new Exception("Database query failed: " . $this->db->ErrorMsg());
@@ -117,7 +118,7 @@ class BbsRepositoryImpl implements BbsRepository {
 			return null; // 게시글이 존재하지 않음
 		}
 		if ($rs->fields) {
-			$returnValue['row'] = new BbsListDto($rs->fetchRow());
+			$returnValue = new Bbs($rs->fetchRow());
 			$rs->close();
 		}
 		return $returnValue;

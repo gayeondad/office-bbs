@@ -65,9 +65,20 @@ class BbsController
     return $this->bbsService->readAllPosts($params);
   }
 
-  public function retrievePostById(int $postId): ?\cls\bbs\dto\BbsListDto
+  public function retrievePostById(int $postId): ?\cls\bbs\domain\Bbs
   {
-    return $this->bbsService->readPostById($postId);
+    // 게시글 ID가 유효한지 검사
+    if ($postId <= 0) {
+      throw new \InvalidArgumentException("Invalid post ID. It must be a positive integer.");
+    }
+
+    // 게시글 조회
+    $post = $this->bbsService->readPostById($postId);
+    if ($post === null) {
+      throw new \Exception("Post not found.");
+    }
+
+    return $post;
   }
 
   public function createPost(array $data): bool
