@@ -8,6 +8,7 @@ use Exception;
 use cls\configuration\Database;
 use cls\bbs\dto\BbsListDto;
 use cls\bbs\domain\Bbs;
+use cls\helper\PagingHelper;
 
 class BbsRepositoryImpl implements BbsRepository {
 
@@ -23,7 +24,7 @@ class BbsRepositoryImpl implements BbsRepository {
 
 	public function findAllPosts($params=[])
 	{
-		$returnValue = ['rows' => [], 'cnt' => []];
+		$returnValue = ['rows' => [], 'pages' => []];
 
 		$condition = [];
 		$binding_value = [];
@@ -35,10 +36,10 @@ class BbsRepositoryImpl implements BbsRepository {
 		if (!empty($params['searchDateType'])) {
 			switch($params['searchDateType']) {
 				case 'mdf':
-					$findDate = "dtMdf"; 	// 수정일
+					$findDate = "dmodify_date"; 	// 수정일
 					break;
 				default:
-					$findDate = "dtReg"; 	// 등록일
+					$findDate = "dcreate_date"; 	// 등록일
 					break;
 			}
 			if (strtotime($params['startDate']) > strtotime($params['endDate'])) {
@@ -52,15 +53,15 @@ class BbsRepositoryImpl implements BbsRepository {
 		}
 
 		// 게시판 종류
-		if (!empty($params['boardSeq'])) {
-			$condition[] = "boardSeq=?";
-			$binding_value[] = $params['boardSeq'];
+		if (!empty($params['iboard_seq'])) {
+			$condition[] = "iboard_seq=?";
+			$binding_value[] = $params['iboard_seq'];
 		}
 
 		// 검색어 조건 (title, content, writeId)
 		if (!empty($params['searchKeyword'])) {
-			if ($params['searchType'] == 'writeId') {
-				$condition[] = "writeId IN (SELECT id FROM user WHERE name=?)";
+			if ($params['searchType'] == 'writer') {
+				$condition[] = "cwriter_id IN (SELECT iadmin_seq FROM admin WHERE cname=?)";
 				$binding_value[] = '%' . $params['searchKeyword'] . '%';
 			} else {
 				// $condition[] = $params['searchType'] . " LIKE ?";
@@ -72,7 +73,7 @@ class BbsRepositoryImpl implements BbsRepository {
 
 		$whereStr = implode(' AND ', $condition);
 
-		$query = "SELECT *, (SELECT nm FROM adm WHERE id = B0_1.writerId) AS writerName
+		$query = "SELECT *, (SELECT cname FROM admin WHERE cid = B0_1.cwriter_id) AS writerName
 		FROM board B0_1 WHERE {$whereStr} ORDER BY " . $params['sort'] . " " . $params['order'];
 
 		// $num = ($params['currentPage'] - 1) * $params['limit'];
@@ -92,12 +93,15 @@ class BbsRepositoryImpl implements BbsRepository {
 		}
 
 		// count
+		$totalRows = 0;
 		$query = "SELECT COUNT(*) AS cntTotal FROM board B0_1 WHERE {$whereStr}";
 		$cntRs = $this->db->Execute($query, $binding_value);
 		if ($cntRs->fields) {
-			$returnValue['cnt']['totalRows'] = intval($cntRs->fields['cntTotal']);
+			$totalRows = intval($cntRs->fields['cntTotal']);
 			$cntRs->close();
 		}
+
+		$returnValue['pages'] = PagingHelper::paging($params['currentPage'], $params['limit'], $totalRows);
 
 		return $returnValue;
 	}
@@ -109,7 +113,7 @@ class BbsRepositoryImpl implements BbsRepository {
 		if ($int <= 0) {
 			return null; // 유효하지 않은 ID
 		}
-		$query = "SELECT * FROM board B0_1 WHERE seq = ?";
+		$query = "SELECT * FROM board B0_1 WHERE ipost_seq = ?";
 		$rs = $this->db->Execute($query, [$int]);
 		if ($rs === false) {
 			throw new Exception("Database query failed: " . $this->db->ErrorMsg());

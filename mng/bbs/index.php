@@ -3,6 +3,8 @@
  * 관리자 컨트롤
  */
 require_once $_SERVER['DOCUMENT_ROOT'] . "/inc/commonInclude.php";
+// 게시판 시퀀스
+$boadrSeq = 1;
 
 $dirNm = "bbs";
 $tblNm = "board";
@@ -33,8 +35,8 @@ if ($_GET['g'] == 'w') {
 	$logger->info('list form');
 	$logger->warning('list form warning');
 
-	$rows = array();
-	$pages = array();
+	$rows = [];
+	$pages = [];
 
 	$controller = new \cls\bbs\controller\BbsController(true);
 	$rslt = $controller->retrieveAllPosts();
@@ -46,7 +48,7 @@ if ($_GET['g'] == 'w') {
 	$getKeyValue = mkParam($_GET);
 	
 	// 템플릿 렌더링 및 출력
-	echo $twig->render("mng/{$dirNm}/list.html", ['rows' => $rslt['rows'], 'pages' => array($pages), 'getKeyValue' => $getKeyValue, 'currentPage' => $_GET['currentPage']]);
+	echo $twig->render("mng/{$dirNm}/list.html", ['rows' => $rslt['rows'], 'pages' => [$rslt['pages']], 'getKeyValue' => $getKeyValue, 'currentPage' => $_GET['currentPage']]);
 } else {
 	$logger->info('view and edit form');
 

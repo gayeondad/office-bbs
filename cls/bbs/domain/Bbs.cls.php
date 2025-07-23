@@ -6,50 +6,51 @@ namespace cls\bbs\domain;
 
 class Bbs
 {
-	private $seq = NULL;
-	private $boardSeq = 0;
-	private $title = '';
-	private $content = '';
-	private $writeId = '';
-	private $dtReg = '0000-00-00 00:00:00';
-	private $dtMdf = '0000-00-00 00:00:00';
+	private $ipost_seq = NULL;
+	private $iboard_seq = 0;
+	private $ctitle = '';
+	private $ccontent = '';
+	private $cwriter_id = '';
+	private $dcreate_date = '0000-00-00 00:00:00';
+	private $dmodify_date = '0000-00-00 00:00:00';
 
 	public function __construct($row=array())
 	{
-		if (!empty($row['seq'])) $this->seq = $row['seq'];
-		if (!empty($row['boardSeq'])) $this->boardSeq = intval($row['boardSeq']);
-		if (!empty($row['title'])) $this->title = $row['title'];
-		if (!empty($row['content'])) $this->content = $row['content'];
-		if (!empty($row['writeId'])) $this->writeId = $row['writeId'];
-		if (!empty($row['dtReg'])) $this->dtReg = $row['dtReg'];
-		if (!empty($row['dtMdf'])) $this->dtMdf = $row['dtMdf'];
+		if (!empty($row['ipost_seq'])) $this->ipost_seq = $row['ipost_seq'];
+		if (!empty($row['iboard_seq'])) $this->iboard_seq = intval($row['iboard_seq']);
+		if (!empty($row['ctitle'])) $this->ctitle = $row['ctitle'];
+		if (!empty($row['ccontent'])) $this->ccontent = $row['ccontent'];
+		if (!empty($row['cwriter_id'])) $this->cwriter_id = $row['cwriter_id'];
+		if (!empty($row['dcreate_date'])) $this->dcreate_date = $row['dcreate_date'];
+		if (!empty($row['dmodify_date'])) $this->dmodify_date = $row['dmodify_date'];
 	}
 
-	public function getSeq() { return $this->seq; }
-	public function getBoardSeq() { return $this->boardSeq; }
-	public function getTitle() { return $this->title; }
-	public function getContent() { return $this->content; }
-	public function getWriteId() { return $this->writeId; }
-	public function getDtReg() { return $this->dtReg; }
-	public function getDtMdf() { return $this->dtMdf; }
+	public function getIpost_seq() { return $this->ipost_seq; }
+	public function getIboard_seq() { return $this->iboard_seq; }
+	public function getCtitle() { return $this->ctitle; }
+	public function getCcontent() { return $this->ccontent; }
+	public function getCwriter_id() { return $this->cwriter_id; }
+	public function getDcreate_date() { return $this->dcreate_date; }
+	public function getDmodify_date() { return $this->dmodify_date; }
 
-	public function setSeq($seq) { $this->seq = $seq; }
-	public function setBoradSeq($boradSeq) { $this->boradSeq = $boradSeq; }
-	public function setTitle($title) { $this->title = $title; }
-	public function setContent($content) { $this->content = $content; }
-	public function setWriteId($writeId) { $this->writeId = $writeId; }
-	public function setDtReg($dtReg) { $this->dtReg = $dtReg; }
-	public function setDtMdf($dtMdf) { $this->dtMdf = $dtMdf; }
+	public function setIpost_seq($ipost_seq) { $this->ipost_seq = $ipost_seq; }
+	public function setIboard_seq($iboard_seq) { $this->iboard_seq = $iboard_seq; }
+	public function setCtitle($ctitle) { $this->ctitle = $ctitle; }
+	public function setCcontent($ccontent) { $this->ccontent = $ccontent; }
+	public function setCwriter_id($cwriter_id) { $this->cwriter_id = $cwriter_id; }
+	public function setDcreate_date($dcreate_date) { $this->dcreate_date = $dcreate_date; }
+	public function setDmodify_date($dmodify_date) { $this->dmodify_date = $dmodify_date; }
+
 	public function toArray()
 	{
 		return [
-			'seq' => $this->seq,
-			'boardSeq' => $this->boardSeq,
-			'title' => $this->title,
-			'content' => $this->content,
-			'writeId' => $this->writeId,
-			'dtReg' => $this->dtReg,
-			'dtMdf' => $this->dtMdf,
+			'ipost_seq' => $this->ipost_seq,
+			'iboard_seq' => $this->iboard_seq,
+			'ctitle' => $this->ctitle,
+			'ccontent' => $this->ccontent,
+			'cwriter_id' => $this->cwriter_id,
+			'dcreate_date' => $this->dcreate_date,
+			'dmodify_date' => $this->dmodify_date,
 		];
 	}
 }

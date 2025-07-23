@@ -1,9 +1,19 @@
 <div class="mb-3">
   <label for="title" class="form-label">제목</label>
-  <input type="text" class="form-control" name="title" id="title" placeholder="제목" value="{{ data.title }}" required>
+  <input
+    type="text"
+    class="form-control"
+    name="ctitle"
+    id="title"
+    placeholder="제목"
+    value="{{ data.ctitle }}"
+    required
+  />
 </div>
 
 <div class="mb-3">
   <label for="adminpwd" class="form-label">내용</label>
-  <textarea class="form-control" name="content" id="jodit-editor" rows="3">{% if data.content is defined %}{{ data.content }}{% endif %}</textarea>
+  <textarea class="form-control" name="ccontent" id="jodit-editor" rows="3">
+{% if data.content is defined %}{{ data.ccontent }}{% endif %}</textarea
+  >
 </div>

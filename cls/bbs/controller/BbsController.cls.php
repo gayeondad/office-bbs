@@ -26,7 +26,7 @@ class BbsController
     $searchDateType = isset($_GET['searchDateType']) ? strip_tags($_GET['searchDateType']) : 'dtReg'; // 기본값은 'dtReg'
     $startDate = isset($_GET['startDate']) ? strip_tags($_GET['startDate']) : date('Y-m-d', strtotime('-1 month')); // 기본값은 한 달 전
     $endDate = isset($_GET['endDate']) ? strip_tags($_GET['endDate']) : date('Y-m-d'); // 기본값은 오늘
-    $sort = isset($_GET['sort']) ? strip_tags($_GET['sort']) : 'dtReg'; // 기본값은 'dtReg'
+    $sort = isset($_GET['sort']) ? strip_tags($_GET['sort']) : 'dcreate_date'; // 기본값은 'dcreate_date'
     $order = isset($_GET['order']) ? strip_tags($_GET['order']) : 'DESC'; // 기본값은 'DESC'
     $boardSeq = isset($_GET['boardSeq']) ? filter_var($_GET['boardSeq'], FILTER_VALIDATE_INT, ['options' => ['default' => 1, 'min_range' => 1]]) : 1; // 기본값은 1
 
@@ -51,6 +51,7 @@ class BbsController
 
     $params = [
       'limit' => $limit,
+      'currentPage' => $currentPage,
       'offset' => $offset,
       'searchKeyword' => $searchKeyword,
       'searchType' => $searchType,
