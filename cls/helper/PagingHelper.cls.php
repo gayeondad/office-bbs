@@ -100,4 +100,43 @@ class PagingHelper {
 
         return $page;
     }
+
+    public static function mkPages($totalItems, $itemsPerPage=10, $pagesToShow=5, $currentPage = 1)
+    {
+        if (empty($totalItems)) {
+            return []; // 아이템이 없을 경우 빈 배열 반환
+        }
+
+        $firstPage = 1;
+        $lastPage = ceil($totalItems / $itemsPerPage);
+
+        // $startPage = max(1, $currentPage - floor($cntOfPagesToShow / 2));
+        $startPage = $currentPage - ($currentPage % $pagesToShow) + 1;
+        if ($currentPage % $pagesToShow == 0) {
+            $startPage -= $pagesToShow;
+        }
+        $endPage = min($lastPage, $startPage + $pagesToShow - 1);
+
+        // if ($endPage - $startPage < $cntOfPagesToShow - 1) {
+        //     $startPage = max(1, $endPage - $cntOfPagesToShow + 1);
+        // }
+
+        return [
+            // 'total' => $totalItems,
+            'first' => 1,
+            'prev' => max(1, $startPage - $pagesToShow),
+            'next' => min($lastPage, $endPage + 1),
+            'last' => $lastPage,
+            'visuable' => range($startPage, $endPage)
+        ];
+    }
+
+    public static function getPageUrl($page, $params = [])
+    {
+        $query = http_build_query(array_merge(['page' => $page], $params));
+        return '?' . $query; // URL 쿼리 문자열 생성
+    }
+
+
+
 }

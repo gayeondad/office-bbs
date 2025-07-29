@@ -1,6 +1,11 @@
-{% extends "layout.html" %} {% block head %} {{ parent() }}
-<link href="/rsc/jodit/jodit.min.css" rel="stylesheet" type="text/css" />
-{% endblock %} {% block content %}
+{% extends "layout.html" %} 
+{% block head %} 
+  {{ parent() }}
+  <link href="/rsc/jodit/jodit.min.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="/rsc/jodit/jodit.min.js" defer></script>
+{% endblock %} 
+
+{% block content %}
 <div style="width: 90%; margin-left: 20px">
   <p>view</p>
 
@@ -12,71 +17,67 @@
     <button type="button" id="btnDelt" class="btn btn-danger">삭제</button>
   </div>
 </div>
-{% endblock %} {% block after_script %} {{ parent() }}
-<script type="text/javascript" src="/rsc/jodit/jodit.min.js"></script>
-<script>
-  // Jodit.make('#jodit-editor');
-</script>
-<script>
-  window.onload = () => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
+{% endblock %} 
 
-    const listButton = document.querySelector("#btnList");
-    listButton.addEventListener("click", () => {
-      urlParams.set("g", "l");
-      if (urlParams.has("seq")) {
-        urlParams.delete("seq");
-      }
-      const newQueryString = urlParams.toString();
-      window.location.href = "./index.php?" + newQueryString;
-    });
+{% block after_script %} 
+  {{ parent() }}
 
-    const editButton = document.querySelector("#btnEdit");
-    editButton.addEventListener("click", () => {
-      urlParams.set("g", "e");
-      const newQueryString = urlParams.toString();
-      window.location.href = "./index.php?" + newQueryString;
-    });
+  <script>
+    // Jodit.make('#jodit-editor');
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
 
-    const deleteButton = document.querySelector("#btnDelt");
-    deleteButton.addEventListener("click", () => {
-      if (confirm("정말 삭제하시겠습니까?")) {
-        const url = "./proc.php";
-        const formData = new FormData();
-        formData.append("a", "d");
-        formData.append("boardSeq", "{{ boardSeq }}");
-        formData.append("seq", "{{ data.seq }}");
+      // Initialize buttons
+      const btnList = document.getElementById("btnList");
+      const btnEdit = document.getElementById("btnEdit");
+      const btnDelt = document.getElementById("btnDelt");
 
-        fetch(url, {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("네트워크 응답이 정상이 아닙니다.");
-            }
-            console.log(response.status);
-            return response.json();
+      // List button event
+      btnList.addEventListener("click", () => {
+        urlParams.set("g", "l");
+        if (urlParams.has("seq")) {
+          urlParams.delete("seq");
+        }
+        window.location.href = "./index.php?" + urlParams.toString();
+      });
+
+      // Edit button event
+      btnEdit.addEventListener("click", () => {
+        urlParams.set("g", "e");
+        window.location.href = "./index.php?" + urlParams.toString();
+      });
+
+      // Delete button event
+      btnDelt.addEventListener("click", () => {
+        if (confirm("정말 삭제하시겠습니까?")) {
+          const formData = new FormData();
+          formData.append("a", "d");
+          formData.append("boardSeq", "{{ boardSeq }}");
+          formData.append("seq", "{{ data.seq }}");
+
+          fetch("./proc.php", {
+            method: "POST",
+            body: formData,
           })
-          .then((result) => {
-            if (result.code == "success") {
-              window.alert(result.msg);
-              urlParams.set("g", "l");
-              const newQueryString = urlParams.toString();
-              window.location.href = "./index.php?" + newQueryString;
-              // window.location.href = "./index.php" + window.location.search.replace(/g=v/g, "g=l");
-            } else {
-              window.alert(result.msg);
-            }
-          })
-          .catch((error) => {
-            console.log("failure: ", error);
-          });
-      }
-    });
+            .then((response) => response.json())
+            .then((result) => {
+              if (result.code === "success") {
+                alert(result.msg);
+                urlParams.set("g", "l");
+                window.location.href = "./index.php?" + urlParams.toString();
+              } else {
+                alert(result.msg);
+              }
+            })
+            .catch((error) => console.error("Error:", error));
+        }
+      });
 
-    Jodit.make("#jodit-editor");
-  };
-</script>
+      // Initialize Jodit editor
+      Jodit.make("#jodit-editor");
+    });
+  </script>
 {% endblock %}

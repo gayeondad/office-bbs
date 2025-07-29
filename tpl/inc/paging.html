@@ -1,43 +1,43 @@
-  <nav aria-label="Page navigation">
-    <ul class="pagination">
-      {% for page in pages %} 
-        {% if page.first is defined %}
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    {% for page in pages %} 
+      {% if page.first is defined %}
       <li class="page-item{{ page.first == 0 ? ' disabled' : '' }}">
+        <a href="#" title="{{ page.first }}" class="page-link" aria-label="First"
+          ><i class="bi bi-chevron-double-left"></i
+        ></a>
+      </li>
+      {% endif %} 
+      {% if page.prev is defined %}
+      <li class="page-item{{ page.prev == 0 ? ' disabled' : '' }}">
         <a
           href="#"
-          title="{{ page.first }}"
+          title="{{ page.prev }}"
           class="page-link"
-          aria-label="First"
-          ><i class="bi bi-chevron-double-left"></i></a
-        >
+          aria-label="Previous"
+          ><i class="bi bi-chevron-left"></i
+        ></a>
       </li>
-        {% endif %} 
-        
-        {% if page.prev is defined %}
-      <li class="page-item{{ page.prev == 0 ? ' disabled' : '' }}">
-        <a href="#" title="{{ page.prev }}" class="page-link" aria-label="Previous"><i class="bi bi-chevron-left"></i></a>
-      </li>
-        {% endif %} 
-        
-        {% for pgnum in page.visuable %}
-      <li class="page-item{{ pgnum == currentPage ? ' active' : '' }}">
+      {% endif %} 
+      {% for pgnum in page.visuable %}
+      <li class="page-item{{ pgnum == _get.currentPage ? ' active' : '' }}">
         <a href="#" title="{{ pgnum }}" class="page-link">{{ pgnum }}</a>
       </li>
-        {% endfor %} 
-        
-        {% if page.next is defined %}
+      {% endfor %} 
+      {% if page.next is defined %}
       <li class="page-item{{ page.next == 0 ? ' disabled' : '' }}">
-        <a href="#" title="{{ page.next }}" class="page-link" aria-label="Next"><i class="bi bi-chevron-right"></i></a>
+        <a href="#" title="{{ page.next }}" class="page-link" aria-label="Next"
+          ><i class="bi bi-chevron-right"></i
+        ></a>
       </li>
-        {% endif %} 
-        
-        {% if page.last is defined %}
+      {% endif %} 
+      {% if page.last is defined %}
       <li class="page-item{{ page.last == 0 ? ' disabled' : '' }}">
         <a href="#" title="{{ page.last }}" class="page-link" aria-label="Last"
-          ><i class="bi bi-chevron-double-right"></i></a
-        >
+          ><i class="bi bi-chevron-double-right"></i
+        ></a>
       </li>
-        {% endif %} 
-      {% endfor %}
-    </ul>
-  </nav>
+      {% endif %} 
+    {% endfor %}
+  </ul>
+</nav>

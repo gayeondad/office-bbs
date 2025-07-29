@@ -3,7 +3,9 @@
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker-bs5.min.css"
 />
-{% endblock %} {% block content %}
+{% endblock %} 
+
+{% block content %}
 <div class="my-box m-3 p-3">
   <form class="">
     <div class="row mb-2">
@@ -12,18 +14,18 @@
       </div>
       <div class="col-md-5 d-inline-flex" id="input1">
         <select
-          name="dtType"
+          name="searchDateType"
           id="inputState"
           class="form-select form-select-sm"
         >
-          <option value="dtReg" selected>등록일</option>
-          <option value="dtMdf" selected>수정일</option>
+          <option value="dtReg"{% if _get.searchDateType == 'dtReg' %} selected{% endif %}>등록일</option>
+          <option value="dtMdf"{% if _get.searchDateType == 'dtMdf' %} selected{% endif %}>수정일</option>
         </select>
         <input
           type="text"
           class="form-control form-control-sm mx-3"
           name="startDate"
-          value="2025-03-21"
+          value="{{ _get.startDate }}"
           id="startDate"
           autocomplete="off"
         />
@@ -32,7 +34,7 @@
           type="text"
           class="form-control form-control-sm ms-3"
           name="endDate"
-          value="2025-03-21"
+          value="{{ _get.endDate }}"
           id="endDate"
           autocomplete="off"
         />
@@ -60,8 +62,8 @@
           id="searchType"
           class="form-select form-select-sm"
         >
-          <option value="title" selected>제목</option>
-          <option value="content">본문</option>
+          <option value="title"{% if _get.searchType == 'title' %} selected{% endif %}>제목</option>
+          <option value="content"{% if _get.searchType == 'content' %} selected{% endif %}>본문</option>
         </select>
         <input
           type="text"
@@ -100,9 +102,7 @@
   </form>
 </div>
 
-<div>
-  total: {% if pages.0.total is defined %}{{ pages.0.total }}{% endif %}
-</div>
+<div>total: {% if totalCnt is defined %}{{ totalCnt }}{% endif %}</div>
 
 <table class="table table-hover table-sm">
   <colgroup>
@@ -153,12 +153,14 @@
   </div>
 </div>
 
-{% endblock %} {% block after_script %} {{ parent() }}
+{% endblock %} 
+
+{% block after_script %} {{ parent() }}
 <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
 <script>
   window.onload = () => {
     const queryString = window.location.search;
-    console.log(queryString);
+    // console.log(queryString);
     const urlParams = new URLSearchParams(queryString);
 
     console.log(urlParams.toString());
@@ -167,10 +169,10 @@
     for (const aLink of aLinks) {
       aLink.addEventListener("click", (event) => {
         event.preventDefault();
-        if (urlParams.has("ipost_id")) {
-          urlParams.set("ipost_id", aLink.title);
+        if (urlParams.has("ipost_seq")) {
+          urlParams.set("ipost_seq", aLink.title);
         } else {
-          urlParams.append("ipost_id", aLink.title);
+          urlParams.append("ipost_seq", aLink.title);
         }
         urlParams.set("g", "v");
         const newQueryString = urlParams.toString();

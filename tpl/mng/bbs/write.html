@@ -3,6 +3,7 @@
 {% block head %}
   {{ parent() }}
   <link href="/rsc/jodit/jodit.min.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="/rsc/jodit/jodit.min.js" defer></script>
 {% endblock %}
   
 {% block content %}
@@ -26,7 +27,6 @@
 {% endblock %}
 {% block after_script %}
   {{ parent() }}
-  <script type="text/javascript" src="/rsc/jodit/jodit.min.js"></script>
   <script>
     Jodit.make('#jodit-editor');
   </script>

@@ -24,8 +24,7 @@ class BbsRepositoryImpl implements BbsRepository {
 
 	public function findAllPosts($params=[])
 	{
-		$returnValue = ['rows' => [], 'pages' => []];
-
+		$returnValue = ['rows' => [], 'total' => 0];
 		$condition = [];
 		$binding_value = [];
 
@@ -35,7 +34,7 @@ class BbsRepositoryImpl implements BbsRepository {
 		// 날짜 조건
 		if (!empty($params['searchDateType'])) {
 			switch($params['searchDateType']) {
-				case 'mdf':
+				case 'dtMdf':
 					$findDate = "dmodify_date"; 	// 수정일
 					break;
 				default:
@@ -76,8 +75,11 @@ class BbsRepositoryImpl implements BbsRepository {
 		$query = "SELECT *, (SELECT cname FROM admin WHERE cid = B0_1.cwriter_id) AS writerName
 		FROM board B0_1 WHERE {$whereStr} ORDER BY " . $params['sort'] . " " . $params['order'];
 
-		// $num = ($params['currentPage'] - 1) * $params['limit'];
-		$rs = $this->db->SelectLimit($query, $params['limit'], $params['offset'], $binding_value);
+		$offset = ($params['currentPage'] - 1) * $params['itemsPerPage']; // 페이지 번호에 따라 오프셋 계산
+    if ($offset < 0) {  // 오프셋이 음수일 경우 0으로 설정
+      $offset = 0;
+    }
+		$rs = $this->db->SelectLimit($query, $params['itemsPerPage'], $offset, $binding_value);
 		if ($rs === false) {
 			throw new Exception("Database query failed: " . $this->db->ErrorMsg());
 		}
@@ -93,15 +95,14 @@ class BbsRepositoryImpl implements BbsRepository {
 		}
 
 		// count
-		$totalRows = 0;
+		$totalItems = 0;
 		$query = "SELECT COUNT(*) AS cntTotal FROM board B0_1 WHERE {$whereStr}";
 		$cntRs = $this->db->Execute($query, $binding_value);
 		if ($cntRs->fields) {
-			$totalRows = intval($cntRs->fields['cntTotal']);
+			$totalItems = intval($cntRs->fields['cntTotal']);
 			$cntRs->close();
 		}
-
-		$returnValue['pages'] = PagingHelper::paging($params['currentPage'], $params['limit'], $totalRows);
+		$returnValue['total'] = $totalItems;
 
 		return $returnValue;
 	}

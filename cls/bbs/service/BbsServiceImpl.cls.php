@@ -20,7 +20,20 @@ class BbsServiceImpl implements BbsService
    */
   public function readAllPosts(array $params = []): array
   {
-    return $this->repository->findAllPosts($params);
+    $rslt = $this->repository->findAllPosts($params);
+
+    // pagination
+    if (!empty($rslt['total'])) {
+      $rslt['pages'] = \cls\helper\PagingHelper::mkPages(
+        $rslt['total'], 
+        $params['itemsPerPage'] ?? 10, 
+        $params['pagesToShow'] ?? 5, 
+        $params['currentPage'] ?? 1
+      );
+    } else {
+      $rslt['pages'] = [];
+    }
+    return $rslt;
   }
 
   /**

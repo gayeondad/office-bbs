@@ -48,16 +48,17 @@ if ($_GET['g'] == 'w') {
 	$getKeyValue = mkParam($_GET);
 	
 	// 템플릿 렌더링 및 출력
-	echo $twig->render("mng/{$dirNm}/list.html", ['rows' => $rslt['rows'], 'pages' => [$rslt['pages']], 'getKeyValue' => $getKeyValue, 'currentPage' => $_GET['currentPage']]);
+	echo $twig->render("mng/{$dirNm}/list.html", ['rows' => $rslt['rows'], 'pages' => [$rslt['pages']], 'totalCnt' => $rslt['total'], '_get' => $_GET]);
 } else {
 	$logger->info('view and edit form');
 
 	$controller = new \cls\bbs\controller\BbsController(true);
-	$rslt = $controller->retrievePostById((int)$_GET['seq']);
+	$rslt = $controller->retrievePostById((int)$_GET['ipost_seq']);
 	if ($rslt === null) {
 		throw new \Exception("Post not found.");
 	}
 	$data = $rslt->toArray(); // Assuming Bbs has a toArray method to convert to array	
+	// var_dump($data);
 	if (empty($data)) {
 		throw new \Exception("No data found for the given post ID.");
 	}
