@@ -2,48 +2,51 @@
 /**
  * 관리자 CRUD 처리
  */
-if (empty($_SESSION['admcd'])) {
-	session_start();
-}
-require_once $_SERVER['DOCUMENT_ROOT'] . "/inc/autoload.php";
-$msg = "";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/inc/commonInclude.php";
+$boolDebug = false; // 디버그 모드 설정
+$response = ['success' => false, 'content' => '', 'message' => ''];
 
-if (!empty($_POST['a'])) {
-	$mdl = new \cls\model\adm();
-	$obj = new \cls\controller\bulletin(new \cls\model\dbRunQuery($mdl->getTableName(), $mdl->getUniqKeys(), $mdl->getRow(), false));
-	$obj->setRow($_POST);
+$controller = new \cls\adm\controller\AdmController($boolDebug);
 
-	if (!empty($_POST['pw'])) {
-		$auth = new \cls\common\auth();
-		$obj->setRow(array('pw' => $auth->generatePwKey($_POST['pw'])));	// 해싱
-	}
-	
-	switch ($_POST['a']) {
-		case 'i':
-			// 중복 체크 먼저
-			if ($obj->chkDbl(array('id' => $_POST['id']))) {
-				$msg = '{"code": "double", "msg" : "이미 사용중인 아이디입니다."}';
-				break;
+if (!empty($_POST['p'])) {
+	switch ($_POST['p']) {
+		case 'w':
+			$rslt = $controller->createUser($_POST);
+			if ($rslt) {
+				$response['success'] = true;
+				$response['message'] = '관리자 등록 성공';
+			} else {
+				$response['message'] = '관리자 등록 실패';
 			}
-			$obj->setRow(array("dtReg" => date("Y-m-d H:i:s")));
-			$msg = ($obj->writeRow()) ? '{"code": "success", "msg" : "저장에 성공하였습니다."}' : '{"code": "failure", "msg" : "저장에 실패하였습니다."}';
 			break;
 
 		case 'u':
-			$obj->setRow(array("dtMdf" => date("Y-m-d H:i:s")));
-			$msg = ($obj->modifyRow()) ? '{"code": "success", "msg" : "수정에 성공하였습니다."}' : '{"code": "failure", "msg" : "수정에 실패하였습니다."}';
+			$rslt = $controller->updateUser($_POST);
+			if ($rslt) {
+				$response['success'] = true;
+				$response['message'] = '관리자 수정 성공';
+			} else {
+				$response['message'] = '관리자 수정 실패';
+			}
 			break;
 		
 		case 'd':
-			$msg = ($obj->removeRow()) ? '{"code": "success", "msg" : "삭제에 성공하였습니다."}' : '{"code": "failure", "msg" : "삭제에 실패하였습니다."}';
+			$rslt = $controller->deleteUser($_POST);
+			if ($rslt) {
+				$response['success'] = true;
+				$response['message'] = '관리자 삭제 성공';
+			} else {
+				$response['message'] = '관리자 삭제 실패';
+			}
 			break;
 
 		default:
-			$msg = '{"code": "exception", "msg" : "미정의된 값 ( ' . $_POST['a'] . ' ) 입니다."}';
+			$response['message'] = '미정의된 값';
 			break;
 	}
 }
 else {
-	$msg = '{"code": "exception", "msg" : "잘못된 호출 입니다."}';
+	$response['message'] = '잘못된 호출 입니다.';
 }
-echo $msg;
+
+echo json_encode($response, JSON_UNESCAPED_UNICODE);

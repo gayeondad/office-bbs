@@ -1,4 +1,5 @@
 {% extends "layout.html" %} 
+
 {% block head %} 
   {{ parent() }}
   <link href="/rsc/jodit/jodit.min.css" rel="stylesheet" type="text/css" />
@@ -6,10 +7,16 @@
 {% endblock %} 
 
 {% block content %}
-<div style="width: 90%; margin-left: 20px">
+<div style="width: 90%;margin-left: 20px">
   <p>view</p>
 
-  <fieldset disabled>{{ include('mng/bbs/form.html') }}</fieldset>
+  <div>
+    <h2>{{ data.ctitle }}</h2>
+    <p>작성자: {{ data.cwriter_id }} | 작성일: {{ data.dtReg|date("Y-m-d H:i:s") }}</p>
+    <div>
+      {% if data.ccontent is defined %}{{ data.ccontent|raw }}{% endif %}
+    </div>
+  </div>
 
   <div>
     <button type="button" id="btnList" class="btn btn-success">목록</button>
@@ -21,10 +28,6 @@
 
 {% block after_script %} 
   {{ parent() }}
-
-  <script>
-    // Jodit.make('#jodit-editor');
-  </script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const queryString = window.location.search;
@@ -76,8 +79,6 @@
         }
       });
 
-      // Initialize Jodit editor
-      Jodit.make("#jodit-editor");
     });
   </script>
 {% endblock %}

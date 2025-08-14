@@ -1,5 +1,14 @@
-{% extends "layout.html" %} {% block title %}관리자::로그인{% endblock %} {%
-block nav %}{% endblock %} {% block content %}
+{% extends "layout.html" %} 
+
+{% block title %}관리자::로그인{% endblock %} 
+
+{% block head %} {{ parent() }}
+<script src="/rsc/js/helper.js" defer></script>
+{% endblock %} 
+
+{%block nav %}{% endblock %} 
+
+{% block content %}
 <div class="border rounded p-0 mx-auto my-5 w-50">
   <!-- <img class="mb-4" src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
   <div class="border-bottom rounded-top mb-3 bg-body-secondary">
@@ -10,9 +19,7 @@ block nav %}{% endblock %} {% block content %}
 
   <form id="loginform" class="p-5">
     <input type="hidden" name="a" value="i" />
-
     <div class="alert-container" id="messageArea"></div>
-
     <div class="row mb-3">
       <label for="userid" class="col-sm-3 col-form-label">아이디</label>
       <div class="col-sm-9">
@@ -27,7 +34,6 @@ block nav %}{% endblock %} {% block content %}
         />
       </div>
     </div>
-
     <div class="row mb-3">
       <label for="userpw" class="col-sm-3 col-form-label">패스워드</label>
       <div class="col-sm-9">
@@ -40,7 +46,6 @@ block nav %}{% endblock %} {% block content %}
         />
       </div>
     </div>
-
     <div class="form-check text-start my-3">
       <input
         class="form-check-input"
@@ -48,17 +53,7 @@ block nav %}{% endblock %} {% block content %}
         name="savedId"
         value="ok"
         id="savedId"
-        {%
-        if
-        cookie
-        is
-        not
-        empty
-        %}
-        checked="checked"
-        {%
-        endif
-        %}
+        {% if cookie is not empty %} checked="checked"{% endif %}
       />
       <label class="form-check-label" for="savedId"> Remember me </label>
     </div>
@@ -66,48 +61,57 @@ block nav %}{% endblock %} {% block content %}
     <p class="mt-5 mb-3 text-body-secondary">© 2021–2025</p>
   </form>
 </div>
-{% endblock %} {% block footer %}{% endblock %} {% block after_script %}
-<script>
-  window.onload = () => {
-    const f = document.getElementById("loginform");
+{% endblock %} 
 
-    f.addEventListener("submit", function (event) {
+{% block footer %}{% endblock %} 
+
+{% block after_script %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const loginform = document.getElementById("loginform");
+
+    loginform.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      const fData = new FormData(f);
+      const fData = new FormData(loginform);
       console.log(fData.entries());
       for (const [key, value] of fData.entries()) {
         console.log(`${key}: ${value}`);
       }
 
-      const params = new URLSearchParams(fData);
-      console.log(params);
+      // const params = new URLSearchParams(fData);
+      // console.log(params);
       // return;
 
-      fetch("/mng/proc.php", {
-        method: "POST",
-        body: fData,
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("네트워크 응답이 정상이 아닙니다.");
-          }
-          return response.json();
-        })
-        .then((result) => {
-          console.log(result);
-          if (result.code == "success") {
-            console.log("login: success");
-            document.location.reload();
-          } else {
-            const alert = document.getElementById("errmsg");
-            alert.innerHTML = result.msg;
-          }
-        })
-        .catch((error) => {
-          console.log("failure: ", error);
+      try {
+        const data = await sendRequest('proc.php', {
+          method: 'POST',
+          // headers: {
+          //   'Content-Type': 'application/json; charset=utf-8',		// 필수
+          // },
+          // body: JSON.stringify(postData),				// 필수
+          body: fData,
         });
+        let obj = JSON.parse(data);
+        if (!obj) {
+          throw new Error("응답 데이터가 JSON 형식이 아닙니다.");
+        }
+        // console.log("Login Response: ", data);
+        // console.log("Login Response Type: ", typeof data);
+        // console.log("Login Response Success: ", data.success);
+        if (obj.success) {
+          // displayMessage(messageArea, data.message, 'success');
+          // setTimeout(() => {
+            document.location.reload();
+          // }, 1000);
+        } else {
+          displayMessage(messageArea, `저장 실패: ${obj.message}`, 'danger');
+        }
+      } catch (error) {
+        console.error("Save Fetch Error: ", error);
+        displayMessage(messageArea, `네트워크 또는 서버 에러: ${error.message}`, 'danger');
+      }
     });
-  };
+  });
 </script>
 {% endblock %}

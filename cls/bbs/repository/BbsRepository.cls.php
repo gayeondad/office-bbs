@@ -8,5 +8,5 @@ interface BbsRepository {
 	public function findAllPosts($arr=[]);
 	public function findPostById($int=0);
 	public function savePost();
-	public function destroyPostById($int=0);
+	public function deletePostById($int=0);
 }

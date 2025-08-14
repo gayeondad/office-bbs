@@ -3,8 +3,6 @@
  * monolog configuration
  */
 // template loading
-$logPath = $_SERVER['DOCUMENT_ROOT'] . "/log";
-
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -13,6 +11,8 @@ use Monolog\Formatter\LineFormatter;
 // create a log channel
 $logger = new Logger('my_logger');
 // $logger->pushHandler(new StreamHandler($logPath . '/my_app.log', Level::Warning));	// Level::Debug
+
+$logPath = $_SERVER['DOCUMENT_ROOT'] . "/log";
 $handler = new StreamHandler($logPath . '/my_app.log', Level::Warning);
 $handler->setFormatter(new LineFormatter("[%datetime%] %channel%.%level_name%: %message% : %context% : %extra%\n", "Y-m-d H:i:s"));
 $logger->pushHandler($handler);

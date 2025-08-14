@@ -23,7 +23,7 @@ class fileParsing {
 
 	}
 
-	public main()
+	public function main()
 	{
 		$finedItem = array();
 		foreach ($this->files as $file) {

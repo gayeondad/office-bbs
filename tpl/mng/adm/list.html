@@ -1,6 +1,124 @@
 {% extends "layout.html" %}
 
+{% block head %} {{ parent() }}
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker-bs5.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js" defer></script>
+<script src="/rsc/js/datepicker.js" defer></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" defer></script>
+<script src="/rsc/js/daumpost.js" defer></script>
+<script src="/rsc/js/helper.js" defer></script>
+{% endblock %} 
+
 {% block content %}
+<div class="my-box m-3 p-3">
+  <form class="">
+    <div class="row mb-2">
+      <div class="col-md-1">
+        <label for="input1" class="form-label">기간</label>
+      </div>
+      <div class="col-md-5 d-inline-flex" id="input1">
+        <select
+          name="searchDateType"
+          id="inputState"
+          class="form-select form-select-sm"
+        >
+          <option value="dtReg"{% if _get.searchDateType == 'dtReg' %} selected{% endif %}>등록일</option>
+          <option value="dtMdf"{% if _get.searchDateType == 'dtMdf' %} selected{% endif %}>수정일</option>
+        </select>
+        <div class="input-group mx-3">
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            name="startDate"
+            value="{{ _get.startDate }}"
+            id="startDate"
+            autocomplete="off"
+          />
+          <span id="startDateBtn" class="input-group-text"><i class="bi bi-calendar2-date"></i></span>
+        </div>
+        <span> ~ </span>
+        <div class="input-group ms-3">
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            name="endDate"
+            value="{{ _get.endDate }}"
+            id="endDate"
+            autocomplete="off"
+          />
+          <span id="endDateBtn" class="input-group-text"><i class="bi bi-calendar2-date"></i></span>
+        </div>
+      </div>
+      <div class="col-md-1">
+        <label for="input2" class="form-label">부서</label>
+      </div>
+      <div class="col-md-5">
+        {% for key, dprt in options_dprt %}
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="idepart_seq[]"
+              id="dprt{{ loop.index }}"
+              value="{{ key }}"
+              {% if key in _get.idepart_seq %}checked{% endif %}
+            />
+            <label class="form-check-label" for="dprt{{ loop.index }}">{{ dprt }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col-md-1">
+        <label for="input3" class="form-label">검색어</label>
+      </div>
+      <div class="col-md-5 d-inline-flex" id="input3">
+        <select
+          name="searchType"
+          id="searchType"
+          class="form-select form-select-sm"
+        >
+          <option value="cname"{% if _get.searchType == 'cname' %} selected{% endif %}>이름</option>
+          <option value="cid"{% if _get.searchType == 'cid' %} selected{% endif %}>아이디</option>
+        </select>
+        <input
+          type="text"
+          class="form-control form-control-sm ms-3"
+          name="searchKeyword"
+          value="{% if _get.searchKeyword|length > 0 %}{{_get.searchKeyword}}{% endif %}"
+          id="searchKeyword"
+          autocomplete="off"
+        />
+      </div>
+      <div class="col-md-1">
+        <label for="input4" class="form-label">직급</label>
+      </div>
+      <div class="col-md-5" id="input4">
+        {% for key, pstn in options_pstn %}
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="cposition[]"
+              id="pstn{{ loop.index }}"
+              value="{{ key }}"
+              {% if key in _get.cposition %}checked{% endif %}
+            />
+            <label class="form-check-label" for="pstn{{ loop.index }}">{{ pstn }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+      <button type="submit" class="btn btn-primary">검색</button>
+    </div>
+  </form>
+</div>
 
 <div>
   total: {% if pages.0.total is defined %}{{ pages.0.total }}{% endif %}
@@ -10,9 +128,10 @@
   <thead>
     <tr class="table-warning">
       <th scope="col">#</th>
-      <th scope="col">부서</th>
       <th scope="col">아이디</th>
       <th scope="col">이름</th>
+      <th scope="col">부서</th>
+      <th scope="col">직급</th>
       <th scope="col">관리자역할</th>
       <th scope="col">등록일시</th>
     </tr>
@@ -20,34 +139,146 @@
   <tbody>
     {% for row in rows %}
     <tr>
-      <th scope="row">{{ row.num }}</th>
-      <td>{{ row.dprtNm }}</td>
-      <td><a href="index.php?g=v&seq={{ row.seq }}">{{ row.id }}</a></td>
-      <td>{{ row.nm }}</td>
-      <td>{{ row.roleNm }}</td>
-      <td>{{ row.dtReg }}</td>
+      <th scope="row">{{ loop.index }}</th>
+      <td><a href="index.php?g=v&seq={{ row.iadmin_seq }}">{{ row.cid }}</a></td>
+      <td>{{ row.cname }}</td>
+      <td>{{ options_dprt[row.idepart_seq] }}</td>
+      <td>{{ options_pstn[row.cposition] }}</td>
+      <td>{{ row.irole_seq }}</td>
+      <td>{{ row.dcreate_date }}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 
-<div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
-  <div class="btn-group" role="group" aria-label="First group">
-    {% for page in pages %}
-      {% if page.first is defined %}<button type="button" value="{{ page.first }}" class="btn btn-outline-secondary">처음</button>{% endif %}
-      {% if page.prev is defined %}<button type="button" value="{{ page.prev }}" class="btn btn-outline-secondary">이전</button>{% endif %}
-      {% for pgnum in page.visable %}<button type="button" value="{{ pgnum }}" class="btn btn-outline-secondary">{{ pgnum }}</button>{% endfor %}
-      {% if page.next is defined %}<button type="button" value="{{ page.next }}" class="btn btn-outline-secondary">다음</button>{% endif %}
-      {% if page.last is defined %}<button type="button" value="{{ page.last }}" class="btn btn-outline-secondary">마지막</button>{% endif %}
-    {% endfor %}
-  </div>
-  <div class="input-group">
-    <div class="input-group-text" id="btnGroupAddon2">@</div>
+<div
+  class="btn-toolbar justify-content-evenly"
+  role="toolbar"
+  aria-label="Toolbar with button groups"
+>
+  {{ include('inc/paging.html') }}
+  <!--   <div class="input-group">
+    <div class="input-group-text" id="btnGroupAddon2">바로가기</div>
     <input type="text" class="form-control" placeholder="Input group example" aria-label="Input group example" aria-describedby="btnGroupAddon2">
-  </div>
+  </div> -->
 
   <div>
-    <button type="button" id="btnWrite" class="btn btn-success">작성</button>
+    <button type="button" id="btnWrite" class="btn btn-sm btn-success">
+      작성
+    </button>
+  </div>
+</div>
+
+<div class="modal fade" id="userInputModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header modal-header-gray">
+        <h5 class="modal-title" id="userInputModalLabel">관리자 추가(수정)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form name="saveform" id="saveform">
+        <input type="hidden" name="p" value="w" />
+        <div class="alert-container" id="messageArea"></div>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <label for="idepart_seq" class="col-sm-3 col-form-label col-form-label-sm">부서/직급</label>
+            <div class="col-sm-4">
+              <select name="idepart_seq" id="idepart_seq" class="form-select form-select-sm">
+                <option value="">부서</option>
+                {% for key, dprt in options_dprt %}
+                  <option value="{{ key }}">{{ dprt }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-sm-5">
+              <select name="cposition" id="cposition" class="form-select form-select-sm">
+                <option value="">직급</option>
+                {% for key, pstn in options_pstn %}
+                  <option value="{{ key }}">{{ pstn }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="cid" class="col-sm-3 col-form-label col-form-label-sm">아이디</label>
+            <div class="col-sm-9">
+              <input type="text" name="cid" class="form-control form-control-sm" id="cid">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="cpassword" class="col-sm-3 col-form-label col-form-label-sm">비밀번호</label>
+            <div class="col-sm-9">
+              <input type="password" name="cpassword" class="form-control form-control-sm" id="cpassword">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="cname" class="col-sm-3 col-form-label col-form-label-sm">이름</label>
+            <div class="col-sm-9">
+              <input type="text" name="cname" class="form-control form-control-sm" id="cname">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="irole_seq" class="col-sm-3 col-form-label col-form-label-sm">역할</label>
+            <div class="col-sm-9">
+              <select name="irole_seq" id="irole_seq" class="form-select form-select-sm">
+                <option value="">역할</option>
+                {% for key, role in options_role %}
+                  <option value="{{ key }}">{{ role }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="ctel" class="col-sm-3 col-form-label col-form-label-sm">전화번호</label>
+            <div class="col-sm-9">
+              <input type="text" name="ctel" class="form-control form-control-sm" id="ctel">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="cfax" class="col-sm-3 col-form-label col-form-label-sm">팩스번호</label>
+            <div class="col-sm-9">
+              <input type="text" name="cfax" class="form-control form-control-sm" id="cfax">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="cphone" class="col-sm-3 col-form-label col-form-label-sm">핸드폰번호</label>
+            <div class="col-sm-9">
+              <input type="text" name="cphone" class="form-control form-control-sm" id="cphone">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="caddr" class="col-sm-3 col-form-label col-form-label-sm">주소</label>
+            <div class="col-sm-9">
+              <div class="row d-flex flex-row mb-3">
+                <div class="col-sm-3">
+                  <input type="text" name="cpost" id="cpost" class="form-control form-control-sm" />
+                </div>
+                <div class="col-sm-3">
+                  <input type="button" class="btn btn-outline-primary btn-sm" onclick="postapp('cpost','caddr','caddr_detail');" value="주소검색" />
+                </div>
+              </div>
+              <div>
+                <input type="text" name="caddr" id="caddr" class="form-control form-control-sm" />
+              </div>
+              <div class="mt-3">
+                <input type="text" name="caddr_detail" id="caddr_detail" class="form-control form-control-sm" />
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="buseable" class="col-sm-3 col-form-label col-form-label-sm">근무여부</label>
+            <div class="col-sm-9 form-check form-switch d-flex align-items-center">
+              <input class="form-check-input" type="checkbox" role="switch" name="buseable" id="buseable" value="1" checked />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <!-- <div class="alert-container me-3" id="messageArea">estets</div> -->
+          <button type="submit" class="btn btn-success">저장</button>
+          <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button> -->
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -55,19 +286,124 @@
 {% block after_script %}
   {{ parent() }}
   <script>
-    window.onload = () => {
+    document.addEventListener("DOMContentLoaded", () => {
+      // 페이지 버튼 클릭 이벤트
       const pageButton = document.querySelector(".btn-outline-secondary");
-      if (pageButton !== null && pageButton !== undefined) {
-        pageButton.addEventListener("click", () => {
+      if (pageButton) {
+        pageButton.addEventListener("click", function() {
           console.log('page number: ' + this.value);
           document.location.href = "./index.php?currentPage=" + this.value;
         });
       }
 
+      // 작성 버튼 클릭 이벤트
       const writeButton = document.querySelector("#btnWrite");
-      writeButton.addEventListener("click", () => {
-        document.location.href = "./index.php?g=w";
+      // const modelUserInput = document.querySelector("#userInputModal");
+      const modelUserInput = new bootstrap.Modal(document.getElementById("userInputModal"), {
+        keyboard: false
       });
-    }
+      writeButton.addEventListener("click", () => {
+        // document.location.href = "./index.php?g=w";
+        modelUserInput.show();
+      });
+
+       userInputModal.addEventListener('hidden.bs.modal', (event) => {
+        // console.log('hide');
+        window.location.reload();
+      });
+
+      // Datepicker 설정
+      setDatepicker();
+
+      // 저장 폼 유효성 검사 및 제출
+      const saveform = document.getElementById("saveform");
+      const messageArea = document.getElementById("messageArea");
+      saveform.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        if (saveform.idepart_seq.value.trim() === '') {
+          displayMessage(messageArea, '부서를 선택해주세요.', 'warning');
+          saveform.idepart_seq.focus();
+          return;
+        }
+        if (saveform.cposition.value.trim() === '') {
+          displayMessage(messageArea, '직급을 선택해주세요.', 'warning');
+          saveform.ComName.focus();
+          return;
+        }
+        if (saveform.cid.value.trim() === '') {
+          displayMessage(messageArea, '아이디를 입력해주세요.', 'warning');
+          saveform.cid.focus();
+          return;
+        }
+        if (saveform.cpassword.value.trim() === '') {
+          displayMessage(messageArea, '비밀번호를 입력해주세요.', 'warning');
+          saveform.cpassword.focus();
+          return;
+        }
+        if (saveform.cname.value.trim() === '') {
+          displayMessage(messageArea, '이름을 입력해주세요.', 'warning');
+          saveform.cname.focus();
+          return;
+        }
+        if (saveform.irole_seq.value.trim() === '') {
+          displayMessage(messageArea, '역할을 선택해주세요.', 'warning');
+          saveform.irole_seq.focus();
+          return;
+        }
+
+        // const postData = {
+        //   p: saveform.p.value,
+        //   cid: saveform.cid.value.trim(),
+        //   cpassword: saveform.cpassword.value.trim(),
+        //   cname: saveform.cname.value.trim(),
+        //   ctel: saveform.ctel.value.trim(),
+        //   cfax: saveform.cfax.value.trim(),
+        //   cphone: saveform.cphone.value.trim(),
+        //   cpost: saveform.cpost.value.trim(),
+        //   caddr: saveform.caddr.value.trim(),
+        //   caddr_detail: saveform.caddr_detail.value.trim(),
+        //   idepart_seq: saveform.idepart_seq.value,
+        //   cposition: saveform.cposition.value,
+        //   irole_seq: saveform.irole_seq.value,
+        //   buseable: saveform.buseable.value
+        // }
+        // console.log(postData);
+
+        const fData = new FormData(saveform);
+        console.log(fData.entries());
+        for (const [key, value] of fData.entries()) {
+          console.log(`${key}: ${value}`);
+        }
+
+        try {
+          const data = await sendRequest('proc.php', {
+            method: 'POST',
+            // headers: {
+            //   'Content-Type': 'application/json; charset=utf-8',		// 필수
+            // },
+            // body: JSON.stringify(postData),				// 필수
+            body: fData,
+          });
+          console.log("Save Response: ", data);
+          let obj = JSON.parse(data);
+          if (!obj) {
+            throw new Error("응답 데이터가 JSON 형식이 아닙니다.");
+          }
+          if (obj.success) {
+            displayMessage(messageArea, obj.message, 'success');
+            setTimeout(() => {
+              document.location.reload();
+            }, 1000);
+          } else {
+            displayMessage(messageArea, `저장 실패: ${obj.message}`, 'danger');
+          }
+        } catch (error) {
+          console.error("Save Fetch Error: ", error);
+          displayMessage(messageArea, `네트워크 또는 서버 에러: ${error.message}`, 'danger');
+        }
+      });
+    }); 
   </script>
+  
 {% endblock %}

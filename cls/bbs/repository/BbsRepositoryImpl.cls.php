@@ -57,16 +57,25 @@ class BbsRepositoryImpl implements BbsRepository {
 			$binding_value[] = $params['iboard_seq'];
 		}
 
+		if (!empty($params['writer'])) {
+			$condition[] = "cwriter_id IN (SELECT iadmin_seq FROM admin WHERE cname=?)";
+			$binding_value[] = '%' . $params['writer'] . '%';
+		}
+
 		// 검색어 조건 (title, content, writeId)
 		if (!empty($params['searchKeyword'])) {
-			if ($params['searchType'] == 'writer') {
-				$condition[] = "cwriter_id IN (SELECT iadmin_seq FROM admin WHERE cname=?)";
+			if ($params['searchType'] == 'title') {
+				$condition[] = "ctitle LIKE ?";
 				$binding_value[] = '%' . $params['searchKeyword'] . '%';
-			} else {
-				// $condition[] = $params['searchType'] . " LIKE ?";
-				// $binding_value[] = '%' . $params['searchKeyword'] . '%';
-				$condition[] = "MATCH (" . $params['searchType'] . ") AGAINST (? IN BOOLEAN MODE)";
+			} elseif ($params['searchType'] == 'content') {
+				$condition[] = "MATCH (ccontent) AGAINST (? IN BOOLEAN MODE)";
 				$binding_value[] = '+"' . $params['searchKeyword'] . '"';
+			} else {
+				// 기본적으로 제목과 내용 모두 검색
+				// $condition[] = "(ctitle LIKE ? OR ccontent LIKE ?)";
+				$condition[] = $params['searchType'] . " LIKE ?";
+				$binding_value[] = '%' . $params['searchKeyword'] . '%';
+				// $binding_value[] = '%' . $params['searchKeyword'] . '%';
 			}
 		}
 
@@ -131,10 +140,10 @@ class BbsRepositoryImpl implements BbsRepository {
 
 	public function savePost()
 	{
-
+		
 	}
 
-	public function destroyPostById($int=0)
+	public function deletePostById($int=0)
 	{
 
 	}

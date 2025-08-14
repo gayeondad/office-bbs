@@ -8,9 +8,7 @@
 
 {% block content %}
 <div style="width: 90%;margin-left: 20px;">
-  <p>
-    view
-  </p>
+  <p>edit</p>
   <form action="./proc.php" method="post" id="editform" class="row g-3">
     <input type="hidden" name="boardSeq" value="{{ boardSeq }}">
     <input type="hidden" name="seq" value="{{ data.seq }}">
@@ -26,13 +24,11 @@
 
 </div>
 {% endblock %}
+
 {% block after_script %}
   {{ parent() }}
   <script>
-    Jodit.make('#jodit-editor');
-  </script>
-  <script>
-    window.onload = () => {
+    document.addEventListener("DOMContentLoaded", () => {
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
 
@@ -74,6 +70,9 @@
       cancelButton.addEventListener("click", () => {
         history.back();
       });
-    }
+
+      // Initialize Jodit editor
+      Jodit.make("#jodit-editor");
+    });
   </script>
 {% endblock %}

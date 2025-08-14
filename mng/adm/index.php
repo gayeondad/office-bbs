@@ -3,31 +3,17 @@
  * 관리자 컨트롤
  */
 require_once $_SERVER['DOCUMENT_ROOT'] . "/inc/commonInclude.php";
-
+$boolDebug = true; // 디버그 모드 설정
 
 $dirNm = "adm";
 $tblNm = "adm";
 if (empty($_GET['g'])) $_GET['g'] = 'l';
 
-$options_dprt = array(
-	array('value' => '1', 'label' => '경영팀'),
-	array('value' => '2', 'label' => '고객팀'),
-	array('value' => '3', 'label' => 'IT팀')
-);
+$options_dprt = ['1' => '경영팀', '2' => '고객팀', '3' => 'IT팀'];
 
-$options_pstn = array(
-	array('value' => '10', 'label' => '사원'),
-	array('value' => '20', 'label' => '대리'),
-	array('value' => '30', 'label' => '과장')
-);
+$options_pstn = ['10' => '사원', '20' => '대리', '30' => '과장', '40' => '차장', '50' => '부장', '90' => '사장'];
 
-
-// $options_role = array(
-// 	array('value' => '1', 'label' => '고급관리자'),
-// 	array('value' => '2', 'label' => '중급관리자'),
-// 	array('value' => '3', 'label' => '초급관리자')
-// );
-
+$options_role = ['1' => '게스트', '2' => '일반관리자', '9' => '슈퍼관리자'];
 
 
 if ($_GET['g'] == 'w') {
@@ -39,34 +25,16 @@ if ($_GET['g'] == 'w') {
 elseif ($_GET['g'] == 'l') {
 	$logger->info('list form');
 	$logger->warning('list form warning');
+
+	// var_dump($_GET); // 디버그용
+
+	$controller = new \cls\adm\controller\AdmController($boolDebug);
+	$rslt = $controller->retrieveAllUsers();
+	// var_dump($rslt); // 디버그용
+	// var_dump($_GET); // 디버그용
 	
-	$rows = array();
-	$pages = array();
-
-	// list form
-	if (empty($_GET['currentPage'])) $_GET['currentPage'] = 1;
-	if (empty($_GET['rowPerPage'])) $_GET['rowPerPage'] = 10;
-	if (empty($_GET['dtDiv'])) $_GET['dtDiv'] = 'dtReg';	// 기본 정렬 : dtReg
-	if (empty($_GET['sortDiv'])) $_GET['sortDiv'] = 'DESC';
-	$sortArr = array();
-	$sortArr[] = array($_GET['dtDiv'] => $_GET['sortDiv']);
-
-	$mdl = new \cls\model\admList($_GET, $sortArr, $tblNm);
-	$list = new \cls\controller\bulletinList(new \cls\model\dbListQuery($mdl->getQueryStr(), $mdl->getCountQueryStr(), $mdl->getBindingArr(), true));
-
-	$list->setCurrentPage($_GET['currentPage']);
-	$list->setRowPerPage($_GET['rowPerPage']);
-
-	if (!$list->listQry()) {
-		echo '조회할 목록이 없습니다.';
-	}
-	else {
-		$rows = $list->getRows();
-		$pages = $list->getPages();
-	}
-
 	// 템플릿 렌더링 및 출력
-	echo $twig->render("mng/{$dirNm}/list.html", ['rows' => $rows, 'pages' => array($pages)]);
+	echo $twig->render("mng/{$dirNm}/list.html", ['rows' => $rslt['rows'], 'pages' => [$rslt['pages']], 'totalCnt' => $rslt['total'], '_get' => $_GET, 'options_dprt' => $options_dprt, 'options_pstn' => $options_pstn, 'options_role' => $options_role]);
 }
 else {
 	$logger->info('view and edit form');

@@ -29,13 +29,13 @@ class BbsController
     $_GET['order'] = isset($_GET['order']) ? strip_tags($_GET['order']) : 'DESC'; // 기본값은 'DESC'
     $_GET['boardSeq'] = isset($_GET['boardSeq']) ? filter_var($_GET['boardSeq'], FILTER_VALIDATE_INT, ['options' => ['default' => 1, 'min_range' => 1]]) : 1; // 기본값은 1
 
+    // 날짜 형식 검증
     $_GET['startDate'] = Validator::validateDate($_GET['startDate']);
     $_GET['endDate'] = Validator::validateDate($_GET['endDate']);
-
-    // 유효성 검사
     if ($_GET['startDate'] === null || $_GET['endDate'] === null) {
       throw new \InvalidArgumentException("Invalid date format. Expected format is YYYY-MM-DD.");
     }
+    
     // 유효성 검사 실패 시 기본값으로 설정
     if ($_GET['itemsPerPage'] === false) {
       $_GET['itemsPerPage'] = 10;

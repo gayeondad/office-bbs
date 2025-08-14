@@ -1,9 +1,12 @@
-{% extends "layout.html" %} {% block head %} {{ parent() }}
+{% extends "layout.html" %} 
+
+{% block head %} {{ parent() }}
 <link
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker-bs5.min.css"
 />
 <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js" defer></script>
+<script src="/rsc/js/datepicker.js" defer></script>
 {% endblock %} 
 
 {% block content %}
@@ -31,7 +34,7 @@
             id="startDate"
             autocomplete="off"
           />
-          <span class="input-group-text"><i class="bi bi-calendar2-date"></i></span>
+          <span id="startDateBtn" class="input-group-text"><i class="bi bi-calendar2-date"></i></span>
         </div>
         <span> ~ </span>
         <div class="input-group ms-3">
@@ -43,7 +46,7 @@
             id="endDate"
             autocomplete="off"
           />
-          <span class="input-group-text"><i class="bi bi-calendar2-date"></i></span>
+          <span id="endDateBtn" class="input-group-text"><i class="bi bi-calendar2-date"></i></span>
         </div>
       </div>
       <div class="col-md-1">
@@ -54,6 +57,7 @@
           type="text"
           class="form-control form-control-sm"
           name="writer"
+          value="{% if _get.writer|length > 0 %}{{_get.writer}}{% endif %}"
           id="input2"
         />
       </div>
@@ -76,7 +80,7 @@
           type="text"
           class="form-control form-control-sm ms-3"
           name="searchKeyword"
-          value=""
+          value="{% if _get.searchKeyword|length > 0 %}{{_get.searchKeyword}}{% endif %}"
           id="searchKeyword"
           autocomplete="off"
         />
@@ -210,61 +214,9 @@
       window.location.href = "./index.php?" + newQueryString;
     });
 
-    // Datepicker.globalOptions = {
-    //   buttonClass: "btn btn-primary", // 버튼 클래스 설정
-    //   format: "yyyy-mm-dd", // 날짜 형식 설정
-    // };
-
-    // Datepicker.locales["ko"] = {
-    //   days: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"],
-    //   daysShort: ['일', '월', '화', '수', '목', '금', '토'],
-    //   months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-    //   monthsShort: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-    //   today: "오늘 날짜로 선택하기", // 오늘 날짜로 선택하기
-    //   titleFormat: "yyyy년 m월", // 날짜 선택기 제목 형식
-    // };
-
-    // 1. 한국어 locales 객체 정의
-    const locales = {
-      ko: {
-        days: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"],
-        daysShort: ["일", "월", "화", "수", "목", "금", "토"],
-        daysMin: ["일", "월", "화", "수", "목", "금", "토"],
-        months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-        monthsShort: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-        today: "오늘",
-        clear: "지우기",
-        titleFormat: "yyyy년 m월", // 날짜 선택기 제목 형식
-        format: "yyyy-mm-dd",
-        title: "날짜 선택",
-      },
-    };
-    
-    // 2. Datepicker 라이브러리의 locales 속성을 정의한 객체로 대체
-    Object.assign(Datepicker.locales, locales);
-
-    // 3. Datepicker의 전역 기본 옵션을 설정합니다.
-    // Object.assign(Datepicker.defaultOptions, {
-    //   autohide: true,
-    //   format: 'yyyy-mm-dd',
-    //   language: 'ko'
-    // });
-
-    const startDate = document.getElementById("startDate");
-    const datepicker1 = new Datepicker(startDate, {
-      buttonClass: "btn btn-primary", // 버튼 클래스 설정
-      format: "yyyy-mm-dd", // 날짜 형식 설정
-      language: "ko", // 한국어 설정
-      autohide: true, // 날짜 선택 후 자동으로 닫힘
-      daysOfWeekDisabled: [0, 6], // 주말 비활성화
-    });
-
-    const endDate = document.getElementById("endDate");
-    const datepicker2 = new Datepicker(endDate, {
-      format: "yyyy-mm-dd", // 날짜 형식 설정
-      language: "ko", // 한국어 설정
-      autohide: true, // 날짜 선택 후 자동으로 닫힘
-    });
+    // Datepicker 설정
+    setDatepicker();
   });
 </script>
+
 {% endblock %}
